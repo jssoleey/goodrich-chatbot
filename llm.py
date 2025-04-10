@@ -147,11 +147,16 @@ def get_rag_chain():
     ).pick('answer')
 
 def get_ai_response(user_message, session_id="abc123"):
-    dictionary_chain = get_dictionary_chain()
-    rag_chain = get_rag_chain()
-    rag_pipeline = {"input": dictionary_chain} | rag_chain
+    try:
+        dictionary_chain = get_dictionary_chain()
+        rag_chain = get_rag_chain()
+        rag_pipeline = {"input": dictionary_chain} | rag_chain
 
-    return rag_pipeline.stream(
-        {"input": user_message},
-        config={"configurable": {"session_id": session_id}}
-    )
+        result = rag_pipeline.invoke(
+            {"input": user_message},
+            config={"configurable": {"session_id": session_id}}
+        )
+        return iter([result])  # 기존 join() 방식과 호환되도록 iterator로 반환
+    except Exception as e:
+        print("🔥 예외 발생:", e)
+        return iter(["❌ 오류가 발생했습니다. 관리자에게 문의해 주세요."])
