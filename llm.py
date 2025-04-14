@@ -76,10 +76,7 @@ def rerank_documents(query, docs, top_k=5):
     reranked = sorted(zip(docs, scores), key=lambda x: x[1], reverse=True)
     return [doc for doc, _ in reranked[:top_k]]
 
-class RerankRetriever(BaseRetriever, BaseModel):
-    _base_retriever: any = PrivateAttr()
-    _top_k: int = PrivateAttr()
-
+class RerankRetriever(BaseRetriever):
     def __init__(self, base_retriever, top_k=5, **kwargs):
         super().__init__(**kwargs)
         self._base_retriever = base_retriever
