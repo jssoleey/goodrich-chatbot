@@ -78,10 +78,9 @@ def rerank_documents(query, docs, top_k=5):
     return [doc for doc, _ in reranked[:top_k]]
 
 class RerankRetriever(BaseRetriever):
-    def __init__(self, base_retriever, top_k=5, **kwargs):
-        super().__init__(**kwargs)
-        self._base_retriever = base_retriever
-        self._top_k = top_k
+    def __init__(self, base_retriever, top_k=5):
+        object.__setattr__(self, "_base_retriever", base_retriever)
+        object.__setattr__(self, "_top_k", top_k)
 
     def get_relevant_documents(self, query: str) -> List[Document]:
         docs = self._base_retriever.get_relevant_documents(query)
