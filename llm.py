@@ -18,6 +18,7 @@ from functools import lru_cache
 import streamlit as st
 import os
 from dotenv import load_dotenv
+import traceback
 
 # ======================== 설정 ========================
 load_dotenv(dotenv_path=".envfile", override=True)
@@ -153,7 +154,11 @@ def get_ai_response(user_message, session_id="abc123"):
             {"input": user_message},
             config={"configurable": {"session_id": session_id}}
         )
-        return iter([result])  # 기존 join() 방식과 호환되도록 iterator로 반환
+        return iter([result])
     except Exception as e:
-        print("🔥 예외 발생:", e)
+        import streamlit as st
+        st.error("🔥 invoke 중 예외 발생! 콘솔 로그도 확인해주세요.")
+        print("🔥 invoke 실행 중 예외 발생:", e)
+        traceback.print_exc()  # 🔥 스택 트레이스 전체 출력
         return iter(["❌ 오류가 발생했습니다. 관리자에게 문의해 주세요."])
+
