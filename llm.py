@@ -81,11 +81,9 @@ class RerankRetriever(BaseRetriever):
     def __init__(self, base_retriever, top_k=5):
         object.__setattr__(self, "_base_retriever", base_retriever)
         object.__setattr__(self, "_top_k", top_k)
-
-        # LangChain이 내부적으로 요구하는 속성들 추가
-        self.tags = []
-        self.metadata = {}
-        self.name = "RerankRetriever"
+        object.__setattr__(self, "tags", [])
+        object.__setattr__(self, "metadata", {})
+        object.__setattr__(self, "name", "RerankRetriever")
 
     def get_relevant_documents(self, query: str) -> List[Document]:
         docs = self._base_retriever.get_relevant_documents(query)
@@ -94,6 +92,13 @@ class RerankRetriever(BaseRetriever):
     async def aget_relevant_documents(self, query: str) -> List[Document]:
         docs = await self._base_retriever.aget_relevant_documents(query)
         return rerank_documents(query, docs, top_k=self._top_k)
+
+    # ✅ LangChain compatibility
+    def invoke(self, input: str) -> List[Document]:
+        return self.get_relevant_documents(input)
+
+    async def ainvoke(self, input: str) -> List[Document]:
+        return await self.aget_relevant_documents(input)
 
 # ======================== 세션 관리 ========================
 def get_session_history(session_id: str) -> BaseChatMessageHistory:
