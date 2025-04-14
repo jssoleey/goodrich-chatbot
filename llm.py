@@ -94,10 +94,10 @@ class RerankRetriever(BaseRetriever):
         return rerank_documents(query, docs, top_k=self._top_k)
 
     # ✅ LangChain compatibility
-    def invoke(self, input: str) -> List[Document]:
+    def invoke(self, input: str, config=None) -> List[Document]:
         return self.get_relevant_documents(input)
 
-    async def ainvoke(self, input: str) -> List[Document]:
+    async def ainvoke(self, input: str, config=None) -> List[Document]:
         return await self.aget_relevant_documents(input)
 
 # ======================== 세션 관리 ========================
