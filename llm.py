@@ -82,6 +82,11 @@ class RerankRetriever(BaseRetriever):
         object.__setattr__(self, "_base_retriever", base_retriever)
         object.__setattr__(self, "_top_k", top_k)
 
+        # LangChain이 내부적으로 요구하는 속성들 추가
+        self.tags = []
+        self.metadata = {}
+        self.name = "RerankRetriever"
+
     def get_relevant_documents(self, query: str) -> List[Document]:
         docs = self._base_retriever.get_relevant_documents(query)
         return rerank_documents(query, docs, top_k=self._top_k)
